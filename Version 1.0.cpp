@@ -9,6 +9,7 @@ struct STUDENT
 	wchar_t no[11];
 	wchar_t name[30];
 	wchar_t faculty[30];
+	wchar_t email[50];
 	int year;
 	wchar_t birthday[11];
 	wchar_t image[100];
@@ -19,8 +20,8 @@ struct STUDENT
 STUDENT ReadFile(FILE *fp)
 {
 	STUDENT s;
-	fwscanf(fp, L" \"%[^\",]  \",  \"%[^\",]  \",  \"%[^\",]  \",  \"%d  \",  \"%[^\",]  \",  \"%[^\",]  \",  \"%[^\",]  \",  \"%[^\",]",
-		s.no, s.name, s.faculty, &s.year, s.birthday, s.image, s.bio, s.hobby);
+	fwscanf(fp, L" \"%[^\",]  \",  \"%[^\",]  \",  \"%[^\",]  \",  \"%[^\",]  \",  \"%d  \",  \"%[^\",]  \",  \"%[^\",]  \",  \"%[^\",]  \",  \"%[^\",]",
+		s.no, s.name, s.faculty, s.email, &s.year, s.birthday, s.image, s.bio, s.hobby);
 	fgetwc(fp);
 
 	return s;
@@ -31,6 +32,7 @@ void ShowSTUDENT(STUDENT s)
 	wprintf(L"Number: %s\n", s.no);
 	wprintf(L"Name: %ls\n", s.name);
 	wprintf(L"Faculty: %ls\n", s.faculty);
+	wprintf(L"Email: %ls\n", s.email);
 	wprintf(L"Academic year: %d\n", s.year);
 	wprintf(L"Birthday: %s\n", s.birthday);
 	wprintf(L"Image link: %s\n", s.image);

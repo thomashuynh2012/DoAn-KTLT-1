@@ -37,9 +37,9 @@ STUDENT ReadFile(FILE *fp, int &nHobby)
 		s.no, s.name, s.faculty, s.email, &s.year, s.birthday, s.image, s.bio);
 
 	s.hobby = new wchar_t*[1];
-	s.hobby[0] = new wchar_t[100];
+	s.hobby[0] = new wchar_t[1000];
 	int pos = ftell(fp);
-	fwscanf(fp, L"\",  %[^\n]", *s.hobby);
+	fwscanf(fp, L"\",%[^\n]", s.hobby[0]);
 	fgetwc(fp);
 
 	nHobby = CountHobby(*s.hobby);
@@ -50,12 +50,18 @@ STUDENT ReadFile(FILE *fp, int &nHobby)
 		s.hobby = new wchar_t*[nHobby];
 		for (int i = 0; i < nHobby; i++)
 		{
-			s.hobby[i] = new wchar_t[50];
+			s.hobby[i] = new wchar_t[100];
 		}
 
 		fseek(fp, pos, SEEK_SET);
 		for (int i = 0; i < nHobby; i++)
-			fwscanf(fp, L" \",\"%[^\"\n]", s.hobby[i]);
+			fwscanf(fp, L"\",\"%[^\"\n]", s.hobby[i]);
+		fgetwc(fp);
+	}
+	else if (nHobby == 1)
+	{
+		fseek(fp, pos, SEEK_SET);
+		fwscanf(fp, L"\",\"%[^\"\n]", s.hobby[0]);
 		fgetwc(fp);
 	}
 	return s;
@@ -141,7 +147,7 @@ void HTMLEdit(FILE* fout, STUDENT student, int *choice, int nChoice, int nHobby)
 	wcscat_s(email, student.email);
 	wcscat_s(email, L"</li>");
 
-	wchar_t hobby[110] = L"<li>";
+	wchar_t hobby[1000] = L"<li>";
 	wcscat_s(hobby, *student.hobby);
 	wcscat_s(hobby, L"</li>");
 
@@ -272,7 +278,7 @@ void main()
 	int *choice = NULL;
 	int nChoice = UserChoice(choice);
 
-	int nStudent = 3;
+	int nStudent = 4;
 	int nHobby;
 	STUDENT *student = new STUDENT[nStudent];
 	for (int i = 0; i < nStudent; i++)

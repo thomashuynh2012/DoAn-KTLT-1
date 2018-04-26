@@ -1,5 +1,6 @@
 ﻿#define _CRT_SECURE_NO_WARNINGS
 #include <stdio.h>
+#include <stdlib.h>
 #include <cwchar>
 #include <conio.h>
 #include <fcntl.h>
@@ -76,11 +77,13 @@ void main()
 	// _______________READ STUDENT INFO, GENERATE HTML FILE_______________
 	int nStudent = CountLine(StudentFile); //Number of students is number of lines
 	int nHobby; //Number of hobbies of each student 
-	STUDENT *student = new STUDENT[nStudent];
+	STUDENT *student = (STUDENT*)malloc(nStudent * sizeof(STUDENT));
 
 	for (int i = 0; i < nStudent; i++)
 	{
 		student[i] = GetSTUDENT(StudentFile, nHobby, CSVformat, EmailField);
+		ShowSTUDENT(student[i], nHobby, EmailField);
+		wprintf(L"\n\n");
 		HTMLGenerate(HTMLSource, student[i], choice, nChoice, nHobby);
 	}
 
@@ -89,8 +92,8 @@ void main()
 	wprintf(L"\n%d PROFILE PAGES GENERATED", nStudent);
 	fclose(HTMLSource);
 	fclose(StudentFile);
-	delete[] student;
-	delete[] choice;
+	free(student);
+	free(choice);
 	_getch();
 }
 
@@ -121,10 +124,10 @@ STUDENT GetSTUDENT(FILE *fp, int &nHobby, int CSVformat, int EmailField) //Read 
 		s.hobby = NULL;
 	else //If student has hobby, read hobby
 	{
-		s.hobby = new wchar_t*[nHobby];
+		s.hobby = (wchar_t**)malloc(nHobby * sizeof(wchar_t*));
 		for (int i = 0; i < nHobby; i++)
 		{
-			s.hobby[i] = new wchar_t[100];
+			s.hobby[i] = (wchar_t*)malloc(100 * sizeof(wchar_t));
 			if (CSVformat == 0)
 				fwscanf(fp, L",\"%[^\"\n]\"", s.hobby[i]);
 			else
@@ -159,7 +162,7 @@ int CountLine(FILE* fp) //Count number of lines of file
 	return count;
 }
 
-int CountHobby(FILE *fp, int CSVformat)
+int CountHobby(FILE *fp, int CSVformat) //Count number of hobbies of each student
 {
 	int nHobby;
 	int pos = ftell(fp);
@@ -242,7 +245,7 @@ void HTMLEdit(FILE* fout, STUDENT student, int *choice, int nChoice, int nHobby)
 				fwprintf(fout, L"\t\t\t\t\t\t<div class=\"Personal_Department\">Khoa %ls</div>", student.faculty);
 			break;
 		case 27:
-			if (IsInArray(choice, nChoice, 5))
+			if (IsInArray(choice, nChoice, 4))
 				fwprintf(fout, L"\t\t\t\t\t\t\tEmail: %ls", student.email);
 			break;
 		case 34:
@@ -261,11 +264,11 @@ void HTMLEdit(FILE* fout, STUDENT student, int *choice, int nChoice, int nHobby)
 				fwprintf(fout, L"\t\t\t\t\t\t\t\t<li>Sinh viên khoa: %ls</li>", student.faculty);
 			break;
 		case 50:
-			if (IsInArray(choice, nChoice, 4))
+			if (IsInArray(choice, nChoice, 5))
 				fwprintf(fout, L"\t\t\t\t\t\t\t\t<li>Ngày sinh: %ls</li>", student.birthday);
 			break;
 		case 51:
-			if (IsInArray(choice, nChoice, 5))
+			if (IsInArray(choice, nChoice, 4))
 				fwprintf(fout, L"\t\t\t\t\t\t\t\t<li>Email: %ls</li>", student.email);
 			break;
 		case 57:
@@ -338,9 +341,9 @@ int UserChoice(int *&choice, int &CSVformat, int &EmailField)
 		wprintf(L"1. Fullname\n");
 		wprintf(L"2. Student number\n");
 		wprintf(L"3. Faculty\n");
-		wprintf(L"4. Birthday\n");
 		if (EmailField == 1)
-			wprintf(L"5. Email\n");
+			wprintf(L"4. Email\n");
+		wprintf(L"5. Birthday\n");
 		wprintf(L"6. Bio\n");
 		wprintf(L"7. Hobby\n");
 		wprintf(L"\nHOW MANY fields to show in the profile page? ");
@@ -357,10 +360,10 @@ int UserChoice(int *&choice, int &CSVformat, int &EmailField)
 	if (nChoice == 0) //Default mode
 	{
 		nChoice = 7;
-		choice = new int[nChoice];
+		choice = (int*)malloc(nChoice * sizeof(int));
 		for (int i = 0; i < nChoice; i++)
 		{
-			if (EmailField == 0 && i == 4) //If there is no email field, eliminate choice number 5 (email)
+			if (EmailField == 0 && i == 3) //If there is no email field, eliminate choice number 4 (email)
 				continue;
 			choice[i] = i + 1;
 		}
@@ -369,7 +372,7 @@ int UserChoice(int *&choice, int &CSVformat, int &EmailField)
 	{
 		do
 		{
-			choice = new int[nChoice];
+			choice = (int*)malloc(nChoice * sizeof(int));
 			wprintf(L"Input the fields number:\n");
 			for (int i = 0; i < nChoice; i++)
 			{

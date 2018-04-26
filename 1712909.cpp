@@ -20,79 +20,115 @@ struct STUDENT
 	wchar_t bio[1001];
 	wchar_t **hobby;
 };
+STUDENT GetSTUDENT(FILE *fp, int &nHobby, int CSVformat, int EmailField);
+void ShowSTUDENT(STUDENT student, int nHobby, int EmailField);
 
-STUDENT GetSTUDENT_NoQuotationMark(FILE* fp, int &nHobby, int EmailField) //Read student from CSV file, no quotation mark
+//FILE functions
+
+int CountLine(FILE* fp);
+int CountHobby(FILE *fp, int CSVformat);
+void FileCopy(FILE *fin, FILE *fout);
+bool IsInArray(int *a, int A, int number);
+void HTMLEdit(FILE* fout, STUDENT student, int *choice, int nChoice, int nHobby);
+void HTMLGenerate(FILE *HTMLSource, STUDENT student, int *choice, int nChoice, int nHobby);
+int UserChoice(int *&choice, int &CSVformat, int &EmailField);
+
+//main
+
+void main()
 {
-	STUDENT s;
-	if (EmailField == 1)
-		fwscanf(fp, L" %[^,],%[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^\n,]",
-				s.no, s.name, s.faculty, s.email, &s.year, s.birthday, s.image, s.bio);
-	else
-		fwscanf(fp, L" %[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^\n,]",
-				s.no, s.name, s.faculty, &s.year, s.birthday, s.image, s.bio);
-	
-	//Count number of commas
-	int pos = ftell(fp);
-	int count = 0;
+	_setmode(_fileno(stdout), _O_U16TEXT);
+	_setmode(_fileno(stdin), _O_U16TEXT);
 
-	while (1)
+	// _______________OPEN STUDENTS INFO FILE_______________
+	bool error; //Error flag
+	FILE *StudentFile = NULL;
+	wchar_t StudentFileName[50];
+	do
 	{
-		wchar_t ch = fgetwc(fp);
-		if (ch == L',')
-			count++;
-		else if (ch == L'\n' || ch == WEOF)
-			break;
-	}
-	nHobby = count; //Number of hobbies is number of commas
-	if (nHobby == 0) //If student has no hobby
-		s.hobby = NULL;
-	else
-	{
-		s.hobby = new wchar_t*[nHobby];
-		fseek(fp, pos, SEEK_SET);
-		for (int i = 0; i < nHobby; i++)
-		{
-			s.hobby[i] = new wchar_t[100];
-			fwscanf(fp, L",%[^,\n]", s.hobby[i]);
+		wprintf(L"Students CSV file name (DEFAULT: \"students.csv\"): ");
+		wscanf(L"%ls", StudentFileName);
+		StudentFile = _wfopen(StudentFileName, L"r, ccs=UTF-8");
+		if (StudentFile == NULL) {
+			wprintf(L"\nCAN NOT OPEN FILE!\n\n");
+			error = true;
 		}
+		else
+			error = false;
+	} while (error == true);
+
+	// _______________OPEN HTML SOURCE FILE_______________
+	wchar_t *HTMLSourceName = L"HTMLSource.html";
+	FILE *HTMLSource = _wfopen(HTMLSourceName, L"r, ccs=UTF-8");
+	if (HTMLSource == NULL)
+	{
+		wprintf(L"\nCAN NOT OPEN HTML SOURCE FILE. PLEASE CHECK AGAIN!");
+		_getch();
+		return;
 	}
-	return s;
+
+	// _______________USER'S INPUT_______________
+	int CSVformat; //Choose the CSV format
+	int EmailField; //Check if there is email field
+	int *choice = NULL;
+	int nChoice = UserChoice(choice, CSVformat, EmailField);
+
+	// _______________READ STUDENT INFO, GENERATE HTML FILE_______________
+	int nStudent = CountLine(StudentFile); //Number of students is number of lines
+	int nHobby; //Number of hobbies of each student 
+	STUDENT *student = new STUDENT[nStudent];
+
+	for (int i = 0; i < nStudent; i++)
+	{
+		student[i] = GetSTUDENT(StudentFile, nHobby, CSVformat, EmailField);
+		HTMLGenerate(HTMLSource, student[i], choice, nChoice, nHobby);
+	}
+
+	// _______________FINISH. CLOSE FILES AND DELETE ALLOCATED ARRAYS_______________
+	wprintf(L"\nSUCCESSFUL!");
+	wprintf(L"\n%d PROFILE PAGES GENERATED", nStudent);
+	fclose(HTMLSource);
+	fclose(StudentFile);
+	delete[] student;
+	delete[] choice;
+	_getch();
 }
 
-STUDENT GetSTUDENT(FILE *fp, int &nHobby, int EmailField) //Read student from CSV file, with quotation mark
+STUDENT GetSTUDENT(FILE *fp, int &nHobby, int CSVformat, int EmailField) //Read student from CSV file
 {
 	STUDENT s;
-	if (EmailField == 1) // If there is email field in CSV file
-		fwscanf(fp, L" \"%[^\",]\",\"%[^\",]\",\"%[^\",]\",\"%[^\",]\",\"%d\",\"%[^\",]\",\"%[^\",]\",\"%[^\"]\"",
-				s.no, s.name, s.faculty, s.email, &s.year, s.birthday, s.image, s.bio);
-	else
-		fwscanf(fp, L" \"%[^\",]\",\"%[^\",]\",\"%[^\",]\",\"%d\",\"%[^\",]\",\"%[^\",]\", \"%[^\"]\"",
-				s.no, s.name, s.faculty, &s.year, s.birthday, s.image, s.bio);
-
-	//Count number of quotation marks
-	int pos = ftell(fp);
-	int count = 0;
-	while (1)
+	if (CSVformat == 0)
 	{
-		wchar_t ch = fgetwc(fp);
-		if (ch == L'"')
-			count++;
-		else if (ch == L'\n' || ch == WEOF)
-			break;
+		if (EmailField == 1) // If there is email field in CSV file
+			fwscanf(fp, L" \"%[^\",]\",\"%[^\",]\",\"%[^\",]\",\"%[^\",]\",\"%d\",\"%[^\",]\",\"%[^\",]\",\"%[^\"]\"",
+				s.no, s.name, s.faculty, s.email, &s.year, s.birthday, s.image, s.bio);
+		else
+			fwscanf(fp, L" \"%[^\",]\",\"%[^\",]\",\"%[^\",]\",\"%d\",\"%[^\",]\",\"%[^\",]\", \"%[^\"]\"",
+				s.no, s.name, s.faculty, &s.year, s.birthday, s.image, s.bio);
 	}
-	
-	//Create the hobby array
-	nHobby = count / 2; //Number of hobbies is number of quotation marks devided by 2
+	else if (CSVformat == 1)
+	{
+		if (EmailField == 1)
+			fwscanf(fp, L" %[^,],%[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^\n,]",
+				s.no, s.name, s.faculty, s.email, &s.year, s.birthday, s.image, s.bio);
+		else
+			fwscanf(fp, L" %[^,],%[^,],%[^,],%d,%[^,],%[^,],%[^\n,]",
+				s.no, s.name, s.faculty, &s.year, s.birthday, s.image, s.bio);
+	}
+	nHobby = CountHobby(fp, CSVformat);
+
 	if (nHobby == 0) //If student has no hobby
 		s.hobby = NULL;
-	else
+	else //If student has hobby, read hobby
 	{
 		s.hobby = new wchar_t*[nHobby];
-		fseek(fp, pos, SEEK_SET);
 		for (int i = 0; i < nHobby; i++)
 		{
 			s.hobby[i] = new wchar_t[100];
-			fwscanf(fp, L",\"%[^\"\n]\"", s.hobby[i]);
+			if (CSVformat == 0)
+				fwscanf(fp, L",\"%[^\"\n]\"", s.hobby[i]);
+			else
+				fwscanf(fp, L",%[^,\n]", s.hobby[i]);
 		}
 	}
 	return s;
@@ -113,9 +149,7 @@ void ShowSTUDENT(STUDENT student, int nHobby, int EmailField)
 		wprintf(L"Hobby: %ls\n", student.hobby[i]);
 }
 
-//FILE functions
-
-int CountLine(FILE* fp)
+int CountLine(FILE* fp) //Count number of lines of file
 {
 	int pos = ftell(fp);
 	int count = 0; wchar_t line[MAX_LINES];
@@ -123,6 +157,42 @@ int CountLine(FILE* fp)
 		count++;
 	fseek(fp, pos, SEEK_SET);
 	return count;
+}
+
+int CountHobby(FILE *fp, int CSVformat)
+{
+	int nHobby;
+	int pos = ftell(fp);
+
+	if (CSVformat == 0) //If csv file has type 0, number of hobbies is number of quotation marks devided by 2
+	{
+		int count = 0;
+		while (1)
+		{
+			wchar_t ch = fgetwc(fp);
+			if (ch == L'"')
+				count++;
+			else if (ch == L'\n' || ch == WEOF)
+				break;
+		}
+		nHobby = count / 2;
+	}
+	else if (CSVformat == 1) //If csv file has type 1, number of hobbies is number of commas
+	{
+		int count = 0;
+		while (1)
+		{
+			wchar_t ch = fgetwc(fp);
+			if (ch == L',')
+				count++;
+			else if (ch == L'\n' || ch == WEOF)
+				break;
+		}
+		nHobby = count;
+	}
+
+	fseek(fp, pos, SEEK_SET);
+	return nHobby;
 }
 
 void FileCopy(FILE *fin, FILE *fout) //Copy whole file from fin to fout
@@ -227,14 +297,12 @@ void HTMLGenerate(FILE *HTMLSource, STUDENT student, int *choice, int nChoice, i
 	fclose(fout);
 }
 
-//main
-
 int UserChoice(int *&choice, int &CSVformat, int &EmailField)
 {
 	bool error; //Error flag
 	do
 	{
-		wprintf(L"\nCHOOSE YOUR CVS FILE FORMAT (DEFAULT: 0)\n");
+		wprintf(L"\nCHOOSE YOUR CVS FILE FORMAT (DEFAULT: 1)\n");
 		wprintf(L"0. \"Field 1\",\"Field 2\",\"Field 3\",...\n");
 		wprintf(L"1. Field 1,Field 2,Field 3,...\n");
 		wprintf(L"Your choice: ");
@@ -317,70 +385,4 @@ int UserChoice(int *&choice, int &CSVformat, int &EmailField)
 		} while (error == true);
 	}
 	return nChoice;
-}
-
-void main()
-{
-	_setmode(_fileno(stdout), _O_U16TEXT);
-	_setmode(_fileno(stdin), _O_U16TEXT);
-
-	// _______________OPEN STUDENTS INFO FILE_______________
-	bool error; //Error flag
-	FILE *StudentFile = NULL;
-	wchar_t StudentFileName[50];
-	do
-	{
-		wprintf(L"Students CSV file name (DEFAULT: \"students.csv\"): ");
-		wscanf(L"%ls", StudentFileName);
-		StudentFile = _wfopen(StudentFileName, L"r, ccs=UTF-8");
-		if (StudentFile == NULL) {
-			wprintf(L"\nCAN NOT OPEN FILE!\n\n");
-			error = true;
-		}
-		else
-			error = false;
-	} while (error == true);
-
-	// _______________OPEN HTML SOURCE FILE_______________
-	wchar_t *HTMLSourceName = L"HTMLSource.html";
-	FILE *HTMLSource = _wfopen(HTMLSourceName, L"r, ccs=UTF-8");
-	if (HTMLSource == NULL)
-	{
-		wprintf(L"\nCAN NOT OPEN HTML SOURCE FILE. PLEASE CHECK AGAIN!");
-		_getch();
-		return;
-	}
-
-	// _______________USER'S INPUT_______________
-	int CSVformat; //Choose the CSV format
-	int EmailField; //Check if there is email field
-	int *choice = NULL;
-	int nChoice = UserChoice(choice, CSVformat, EmailField);
-
-	// _______________READ STUDENT INFO, GENERATE HTML FILE_______________
-	int nStudent = CountLine(StudentFile); //Number of students is number of lines
-	int nHobby; //Number of hobbies of each student 
-	STUDENT *student = new STUDENT[nStudent];
-	
-	if (CSVformat == 0)
-		for (int i = 0; i < nStudent; i++)
-		{
-			student[i] = GetSTUDENT(StudentFile, nHobby, EmailField);
-			HTMLGenerate(HTMLSource, student[i], choice, nChoice, nHobby);
-		}
-	else if (CSVformat == 1)
-		for (int i = 0; i < nStudent; i++)
-		{
-			student[i] = GetSTUDENT_NoQuotationMark(StudentFile, nHobby, EmailField);
-			HTMLGenerate(HTMLSource, student[i], choice, nChoice, nHobby);
-		}
-
-	// _______________FINISH. CLOSE FILES AND DELETE ALLOCATED ARRAYS_______________
-	wprintf(L"\nSUCCESSFUL!");
-	wprintf(L"\n%d PROFILE PAGES GENERATED", nStudent);
-	fclose(HTMLSource);
-	fclose(StudentFile);
-	delete[] student;
-	delete[] choice;
-	_getch();
 }

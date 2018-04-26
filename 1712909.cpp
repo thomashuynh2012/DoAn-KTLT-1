@@ -82,8 +82,8 @@ void main()
 	for (int i = 0; i < nStudent; i++)
 	{
 		student[i] = GetSTUDENT(StudentFile, nHobby, CSVformat, EmailField);
-		ShowSTUDENT(student[i], nHobby, EmailField);
 		wprintf(L"\n\n");
+		ShowSTUDENT(student[i], nHobby, EmailField);
 		HTMLGenerate(HTMLSource, student[i], choice, nChoice, nHobby);
 	}
 

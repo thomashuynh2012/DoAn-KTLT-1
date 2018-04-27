@@ -7,7 +7,9 @@
 
 **Email:** thomashuynh2012@gmail.com
 
-## 1. Hướng dẫn sử dụng
+## I. Hướng dẫn sử dụng
+**_CHÚ Ý:_** Xem phần **"II. Quy ước"** để tránh xảy ra lỗi
+
 **Bước 1:** Nhập tên file csv chứa thông tin sinh viên (File mặc định: "students.csv").
 
 **Bước 2:** Chọn định dạng file csv của bạn (Đối với file mặc định là "1").
@@ -24,13 +26,36 @@ SUCCESSFUL!
 ... PROFILE PAGES GENERATED
 ```
   
-## 2. Quy ước
+## II. Quy ước
 - Phải khai báo đúng định dạng của file csv. Nếu không sẽ gặp lỗi.
 - Nếu file csv có trường EMAIL, bắt buộc phải đặt trường EMAIL ngay sau trường KHOA.
 
-## 3. Cách thức hoạt động
-- Đọc tất cả thông tin của sinh viên vào struct STUDENT.
-- Copy tất cả dữ liệu từ file HTMLSource (chứa mã nguồn HTML) vào một file HTML mới tạo.
-- Chỉnh sửa file HTML mới tạo theo thông tin sinh viên, bằng cách:
-  - Đếm số dòng trong file HTML mới tạo.
-  - Nếu đến dòng cần chỉnh sửa thì gọi hàm wprintf để chỉnh sửa
+## III. Cách thức chương trình hoạt động
+**1. Mở file csv do người dùng cung cấp**
+
+**2. Mở file HTML nguồn (HTMLSource)**
+
+**3. Khai báo thông tin từ người dùng**
+  - Định dạng của file csv
+  - Trường email của file csv
+  - Các trường sẽ xuất hiện trên profile page
+
+**4. Đọc thông tin từ file csv vào struct**
+  - Đọc số lượng sinh viên có trong file (dựa vào số dòng)
+  - Căn cứ vào định dạng file csv, dùng hàm `fwscanf` để đọc từ trường _MSSV_ đến trường _Mô tả_
+  - Đếm số trường _Sở thích_ của mỗi sinh viên (dựa vào dấu _"_ hoặc _,_ tùy định dạng)
+  - Tạo mảng các con trỏ `wchar_t **hobby` để lưu các sở thích, đọc mỗi sở thích vào mỗi con trỏ (mảng 1 chiều)
+ 
+**5. Tạo trang HTML**
+  - Tạo một file HTML mới (bằng lệnh `w`)
+  - Copy tất cả dữ liệu từ file HTMLSource (chứa mã nguồn HTML) vào file HTML mới tạo.
+  - Chỉnh sửa file HTML mới tạo theo thông tin sinh viên, bằng cách:
+    - Đếm từng dòng trong file HTML mới tạo.
+    - Nếu đến dòng cần chỉnh sửa thì gọi hàm `wprintf` để viết thông tin lên file HTML
+   
+## IV. Các chú thích khác
+**Tiếng Anh**
+- no: MSSV
+- faculty: khoa
+- bio: mô tả bản thân
+- hobby: sở thích

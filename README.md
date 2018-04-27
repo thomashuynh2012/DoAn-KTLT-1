@@ -10,11 +10,11 @@
 ## I. Hướng dẫn sử dụng
 **_CHÚ Ý:_** Xem phần **"II. Quy ước"** để tránh xảy ra lỗi
 
-**Bước 1:** Nhập tên file csv chứa thông tin sinh viên (File mặc định: "students.csv").
+**Bước 1:** Nhập tên file csv chứa thông tin sinh viên (file-mặc-định: "students.csv").
 
-**Bước 2:** Chọn định dạng file csv của bạn (Đối với file mặc định là "1").
+**Bước 2:** Chọn định dạng file csv của bạn (Đối với file-mặc-định là "1").
 
-**Bước 3:** File csv của bạn có trường "EMAIL" của sinh viên không? (Đối với file mặc định là "1").
+**Bước 3:** File csv của bạn có trường "EMAIL" của sinh viên không? (Đối với file-mặc-định là "1").
 
 **Bước 4:** Chọn cấu hình của profile page
   - Chọn "0" để chọn chế độ mặc định (in tất cả thông tin)

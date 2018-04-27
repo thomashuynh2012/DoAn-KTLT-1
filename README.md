@@ -11,7 +11,7 @@
 - students3.csv: không có dấu `"`, không có email
 - students4.csv: có dấu `"`, không có email
 
-## I. Hướng dẫn sử dụng
+## I. HƯỚNG DẪN SỬ DỤNG
 _Xem thêm phần **"II. Quy ước"** để tránh xảy ra lỗi_
 
 **Bước 1:** Nhập tên file csv chứa thông tin sinh viên (file-mặc-định: "students.csv").
@@ -30,11 +30,11 @@ SUCCESSFUL!
 ... PROFILE PAGES GENERATED
 ```
   
-## II. Quy ước
+## II. QUY ƯỚC
 - Phải khai báo đúng định dạng của file csv. Nếu không sẽ gặp lỗi.
 - Nếu file csv có trường EMAIL, bắt buộc phải đặt trường EMAIL ngay sau trường KHOA.
 
-## III. Cách thức chương trình hoạt động
+## III. CÁCH THỨC CHƯƠNG TRÌNH HOẠT ĐỘNG
 **1. Mở file csv do người dùng cung cấp**
 
 **2. Mở file HTML nguồn (HTMLSource)**
@@ -57,7 +57,7 @@ SUCCESSFUL!
     - Đếm từng dòng trong file HTML mới tạo.
     - Nếu đến dòng cần chỉnh sửa thì gọi hàm `wprintf` để viết thông tin lên file HTML
    
-## IV. Các chú thích khác
+## IV. CÁC CHÚ THÍCH KHÁC
 **Tiếng Anh**
 - no: MSSV
 - faculty: khoa

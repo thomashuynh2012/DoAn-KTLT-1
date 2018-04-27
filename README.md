@@ -8,8 +8,8 @@
 **Các file csv để chạy thử**
 - students.csv: không có dấu `"`, có email
 - students2.csv: có dấu `"`, có email
-- students3.csv: có dấu `"`, không có email
-- students4.csv: không có dấu `"`, không có email
+- students3.csv: không có dấu `"`, không có email
+- students4.csv: có dấu `"`, không có email
 
 ## I. Hướng dẫn sử dụng
 _Xem thêm phần **"II. Quy ước"** để tránh xảy ra lỗi_

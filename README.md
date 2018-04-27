@@ -43,7 +43,7 @@ SUCCESSFUL!
 **4. Đọc thông tin từ file csv vào struct**
   - Đọc số lượng sinh viên có trong file (dựa vào số dòng)
   - Căn cứ vào định dạng file csv, dùng hàm `fwscanf` để đọc từ trường _MSSV_ đến trường _Mô tả_
-  - Đếm số trường _Sở thích_ của mỗi sinh viên (dựa vào dấu _"_ hoặc _,_ tùy định dạng)
+  - Đếm số trường _Sở thích_ của mỗi sinh viên (dựa vào dấu `"` hoặc `,` tùy định dạng)
   - Tạo mảng các con trỏ `wchar_t **hobby` để lưu các sở thích, đọc mỗi sở thích vào mỗi con trỏ (mảng 1 chiều)
  
 **5. Tạo trang HTML**
@@ -59,3 +59,12 @@ SUCCESSFUL!
 - faculty: khoa
 - bio: mô tả bản thân
 - hobby: sở thích
+
+**Tên biến**
+- `int CSVformat`: định dạng của file csv (0 hoặc 1)
+- `int EmailField`: có giá trị 0 nếu không có trường email, ngược lại có giá trị 1
+- Các biến có tiền tố "n" (`nHobby`,`nStudent`,...): số lượng của ...
+
+**Tên hàm**
+- `int CountLine(FILE* fp)`: đếm số dòng của file
+- `bool IsInArray(int* a, int A, int number)`: kiểm tra xem số nummber có nằm trong mảng a (A phần tử) hay không

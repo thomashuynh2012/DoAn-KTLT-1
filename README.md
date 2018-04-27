@@ -1,14 +1,18 @@
 # Đồ án 1 KTLT - Khoa CNTT - ĐHKHTN
-**MSSV:** 1712909
-
-**Họ tên:** Huỳnh Quang Vinh
-
-**Lớp:** 17CTT7
-
+**MSSV:** 1712909 | 
+**Họ tên:** Huỳnh Quang Vinh | 
+**Lớp:** 17CTT7 | 
 **Email:** thomashuynh2012@gmail.com
 
+### CHÚ Ý
+**Các file csv để chạy thử**
+- students.csv: không có dấu `"`, có email
+- students2.csv: có dấu `"`, có email
+- students3.csv: có dấu `"`, không có email
+- students4.csv: không có dấu `"`, không có email
+
 ## I. Hướng dẫn sử dụng
-**_CHÚ Ý:_** Xem phần **"II. Quy ước"** để tránh xảy ra lỗi
+_Xem thêm phần **"II. Quy ước"** để tránh xảy ra lỗi_
 
 **Bước 1:** Nhập tên file csv chứa thông tin sinh viên (file-mặc-định: "students.csv").
 

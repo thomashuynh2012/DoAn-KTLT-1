@@ -2,7 +2,6 @@
 **MSSV:** 1712909 | 
 **Họ tên:** Huỳnh Quang Vinh | 
 **Lớp:** 17CTT7 | 
-**Email:** thomashuynh2012@gmail.com
 
 ### CHÚ Ý
 **Các file csv để chạy thử**
